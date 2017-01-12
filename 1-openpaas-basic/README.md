@@ -1,1 +1,1 @@
-1. OpenPaaS layout
+# OpenPaaS layout

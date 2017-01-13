@@ -18,23 +18,16 @@
 - Elasticsearch: deploy 1 cluster with 3 nodes : 1 master and 2 client (no master and no data) .
 - Mongo: deploy 1 cluster with 3 nodes
 - Redis and rabbitmq are installed just for esn and sabre
-- Jame, esn, and sabre have 2 node per each.
-nginx  for load balancing.
+- James, esn, and sabre have 2 node per each.
+- Nginx  for load balancing.
 
 ## Architecture
 
+![Architecture](architecture.jpg)
+
 ## Implement
 
-
-
-node1.ha: 149.202.185.166
-node2.ha: 213.32.72.41
-node3.ha: 213.32.75.95
-
-
-I. Implement
-
-1. Install java8 on each node
+### Install java8
 
 First you need to add webupd8team Java PPA repository in your system. Edit a new ppa file /etc/apt/sources.list.d/java-8-debian.list in text editor
 
@@ -72,9 +65,9 @@ Java(TM) SE Runtime Environment (build 1.8.0_111-b14)
 Java HotSpot(TM) 64-Bit Server VM (build 25.111-b14, mixed mode)
 ```
 
-2. Install elasticsearch 2.2.1
+### Install elasticsearch 2.2.1
 
-a. Install elasticsearch on each node
+#### Install elasticsearch on each node
 
 Download and install ElasticSearch 2.2.1 deb package from elastic website
 
@@ -101,7 +94,7 @@ Config dir may have not been created (when in a sysV system)
 sudo ln -s /etc/elasticsearch /usr/share/elasticsearch/config
 ```
 
-b. Setup a cluster of elasticsearch
+#### Setup a cluster of elasticsearch
 
 Open the Elasticsearch configuration file for editing:
 
@@ -222,20 +215,7 @@ You should see output that indicates that a cluster named "production" is runnin
       }
     }
   },
-  "metadata" : {
-    "cluster_uuid" : "HjfOGe3LTwyuLgELDCeG8Q",
-    "templates" : { },
-    "indices" : { }
-  },
-  "routing_table" : {
-    "indices" : { }
-  },
-  "routing_nodes" : {
-    "unassigned" : [ ],
-    "nodes" : {
-      "G93FhltDS3az8wFEm6gMug" : [ ]
-    }
-  }
+  ...
 }
 ```
 
@@ -268,55 +248,20 @@ Each node should have a line that says "mlockall" : true, which indicates that m
         "mlockall" : true
       }
     },
-    "ho6xCJ7TQQm5gUALv_C69Q" : {
-      "name" : "node2",
-      "transport_address" : "213.32.72.41:9300",
-      "host" : "213.32.72.41",
-      "ip" : "213.32.72.41",
-      "version" : "2.2.1",
-      "build" : "d045fc2",
-      "http_address" : "213.32.72.41:9200",
-      "attributes" : {
-        "data" : "false",
-        "master" : "false"
-      },
-      "process" : {
-        "refresh_interval_in_millis" : 1000,
-        "id" : 18731,
-        "mlockall" : true
-      }
-    },
-    "-dxAZWjUSBOPCTZyL7Ihkg" : {
-      "name" : "node3",
-      "transport_address" : "213.32.75.95:9300",
-      "host" : "213.32.75.95",
-      "ip" : "213.32.75.95",
-      "version" : "2.2.1",
-      "build" : "d045fc2",
-      "http_address" : "213.32.75.95:9200",
-      "attributes" : {
-        "data" : "false",
-        "master" : "false"
-      },
-      "process" : {
-        "refresh_interval_in_millis" : 1000,
-        "id" : 18694,
-        "mlockall" : true
-      }
-    }
+    ...
   }
 }
 ```
 
 If mlockall is false for any of your nodes, review the node's settings and restart Elasticsearch. A common reason for Elasticsearch failing to start is that ES_HEAP_SIZE is set too high.
 
-2. Install mongo
+### Install mongo
 
-a. Install mongo on each node
+#### Install mongo on each node
 
-Go to https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/
+Go to [here](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/) to install mongo.
 
-b. Setup replicate set
+#### Setup replicate set
 
 Stop mongod service on each node
 
@@ -367,9 +312,9 @@ rs.add("secondary_node_ip:27017");
 rs.add("secondary_node_ip:27017");
 ```
 
-3. Install redis and rabbitmq on node1
+### Install redis and rabbitmq on node1
 
-a. Install redis
+#### Install redis
 - Go to [here](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-redis) to install redis servers
 - Config redis to allow connecting from remote servers
  - Open redis configuration file.
@@ -383,7 +328,7 @@ a. Install redis
  bind 0.0.0.0
  ```
 
-b. Install rabbitmq
+#### Install rabbitmq
 
 - Go to [here](https://www.rabbitmq.com/download.html) to install rabbitmq
 - Config rabbitmq to allow remote server can connect.
@@ -413,9 +358,9 @@ b. Install rabbitmq
   ```
 
 
-4. Install rse
+### Install rse
 
-a. For debian, may be have error while install canvas.
+#### For debian, may be have error while install canvas.
 Fix problem by issuing the following command:
 
 ```
@@ -428,7 +373,7 @@ wget http://ftp.us.debian.org/debian/pool/main/libj/libjpeg8/libjpeg8_8d-1+deb7u
 sudo dpkg -i libjpeg8_8d-1+deb7u1_amd64.deb
 ```
 
-b. Connect to mongo replica set
+#### Connect to mongo replica set
 
 ```
 cd rse/
@@ -450,7 +395,7 @@ mongodb://213.32.72.41:27017/esn?replicaSet=rs0
 
 Save and exit.
 
-5. nginx
+### nginx
 
 a. Install
 
